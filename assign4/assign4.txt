@@ -1,0 +1,110 @@
+Assign4: Due 11:59PM April 20
+
+In this assignment we will design a logical characters processor. The processor will receive a series of characters as input and produce a series of characters as output. The processor may house any number of processing blocks. Not all blocks that are available may be used when creating a processor. Also, a block may be used more than once. The order in which the blocks are used may also vary.
+                                                            
+
+		...input... -> | block1 block2 block3 ... | -> ...output...
+                           Processor
+
+Let's discuss some examples of blocks and then revisit the processor.
+
+1. UpperCaseConverter Block
+	Given a character, this block will send out or return the character in uppercase.
+
+2. LowerCaseConverter Block
+	Given a character, this block will send out or return the character in lowercase.
+	
+3. Multiplier Block
+  Given a character, this block will send out or return two of the same character. For example, if it received 'a', it will produce 'aa'. If it receives '1', it will produce '11'.
+
+4. z-blocker Block
+  Given a character, if the character is a lowercase 'z', this block will not return or produce anything. If it is any other character, it will produce the given character as output. For example, 'a' will result in an output of 'a'.
+
+5. Z-blocker Block
+	This block will not return or produce an output if the character given is an uppercase 'Z'.
+	
+6. k-blocker Block
+   This block will not return or produce an output if the character given is lowercase 'k'.
+
+The program should allow end users to create other similar blocks they like.
+
+The end user should be able to create a processor using any series of blocks.
+
+For example, a user may create a processor with the following series of blocks:
+	UpperCaseConverter - Z-blocker - LowerCaseConverter
+	
+After creating this processor, if a user were to send the following series of characters as input:
+
+	11abcdabcdabcdzzaazzabcd
+
+it will return the following output:
+
+	11abcdabcdabcdaaabcd
+
+In addition to designing a few sample blocks and the processor, we will create a console based driver program.
+	
+Design the program in such a way that:
+
+1. A user can specify the blocks available for use before the program starts. This should include pre-defined blocks and user created blocks.
+
+2. The user can specify, through a file, the blocks they'd like to use and the order or sequence in which they'd like to use them.
+
+Think through the overall design of the program first. Then start with one small, but interesting and valuable part, and evolve the design and code incrementally.
+
+After completing the assignment answer these questions:
+
+1. What did you learn in this assignment?
+
+	We applied a few design patterns for the first time when doing this assignment. We were also in situations where we wrote code with a purpose, and it naturally approached a design pattern.
+
+	We obtained a firmer grasp on the differences between a few factory-type patterns. When attempting to identify the patterns we used, the limitations and consequences became more apparent. If one were to look at the patterns as a starting point, they can feel too situational and specific to actually be useful. It was far easier to code and let it develop a shape before attempting to fit it into a pattern.
+
+
+
+2. What design principles did you use? List each one of them, discuss what this principle is, and give example(s) of where specifically you used it in this assignment.
+
+	The DRY principle aims to avoid duplication of code. Duplicate code was abundant in the different converter blocks, and had to be moved to interfaces. The derived classes would contain their own unique differences. This was done with the two interfaces Converter and ConverterTest.
+
+	The YAGNI principle allowed us to focus on one task at a time. It allowed us to take a more natural approach to using design patterns correctly. Early in the project, we were comparing factory methods to see which would best apply to the project. This 	only slowed our progress, and made us overthink much of the project. Once we went back to coding one step at a time, the code naturally fell in place with various design patterns.
+
+	The Single Responsibility Principle promotes cohesion by stating a class should only have one responsibility and focus. A simple example is that each converter class is short, and does exactly as its name says, such as UpperCaseConverter. The Processor class only deals with its own creation, and running its process method. The list of converters is handled by a separate class before being handed to the Processor. This makes the code less fragile, and more reusable.
+
+	The Open-Close Principle states that software entities should be open for extension, but closed for modification. Our test classes the derive ConverterTest are all simple in structure. They create a new instance of themselves, and then pass the instance to a test factory in the interface. The ConverterTest interface was not modified beyond its initial coding. 
+
+	Liskov's Substitution Principle states that derived class services require no more, and promise no less than the specifications of the corresponding services in the base class. In our assignment, the derived classes never asked more than their base class provided. LowerCaseConverter would only override the convert method of Converter, but request no more. This means that LSP was never violated.
+
+The Dependency Inversion Principle states that a concrete class should not depend upon another concrete class. We have multiple instances of numerous concrete classes depending on a single shared interface. UpperCaseConverter, LowerCaseConverter, Multiplier, and LetterBlocker all derive from the Converter interface instead of depending between each other.
+
+
+
+3. What design patterns did you use? List each one of them, discuss what this pattern is, and give example(s) of where specifically you used it in this assignment.
+
+	The factory method was the first realized pattern in this assignment. The factory method involves defining an interface for creating an object, but allowing the subclasses to decide which class to instantiate. The Converter interface possesses the convert method. The derived classes were able to override this method to accomplish many tasks by polymorphism. The UpperCaseConverter class would convert all possible characters to uppercase. LetterBlocker could remove all characters matching a restricted character. Classes on a higher level of hierarchy could instantiate different classes derived from Converter. These higher level classes include ConverterFactory and Processor.
+
+	The abstract factory was the most obvious pattern in our code. This pattern created an interface for creating families of related or dependent objects without specifying their concrete class. The last class added to the code was the ConverterFactory.
+This class would accept a String, signifying the class name to be instantiated, and any arguments if applicable. With a single block of code, the factory has to be able to convert any correct String into a class. The class is not known until runtime, so it has to accept vague input.
+
+	The cascade method aims to remove noise in code by removing repetition. Certain methods can be called from other methods, producing a single line with dot separators instead of repetitious whole lines. There are small examples throughout the code, where the strongest exist in Converter and ConverterFactory. Converter possesses an andThen method, which the processor uses to cast converters in a more fluid manner. The ConverterFactory possesses a single line with five separate dot operators to promote readability.
+
+	The compose method states that a method should be composed of instructions at a single level of abstraction. After creating the UI, we had to create a proper method to convert String inputs into converter classes. Initially, we placed this method in the UI, but it was untestable and complex. The method was renamed to ConverterFactory, and was moved to its own class as a different level of abstraction. 
+
+
+
+Please bring forward the practices, techniques, and tools you have learned so far. This includes: 
+Good code quality
+Lightweight design
+Minimum code
+Automated testing                                                         
+Code coverage
+Continuous integration
+
+Total[10]: 100
+Program produces desired output for sample pre-defined converters [20]:
+All tests pass [10]:
+Test quality [10]:
+Code coverage [10]:        
+Code quality [10]:
+Design quality [10]:
+Program works for one user defined converter with one parameter [10]:
+... for an additional user defined converter with two parameters [10]:
+Response to questions [10]:
