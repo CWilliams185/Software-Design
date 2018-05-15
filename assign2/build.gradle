@@ -1,0 +1,69 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath ("org.junit.platform:junit-platform-gradle-plugin:1.0.0")
+  }
+}
+
+apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'application'
+                      
+sourceCompatibility = 1.8
+
+dependencies {       
+  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.3'
+  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.3'
+  testCompile 'junit:junit:4.12'
+  testCompile group: 'org.mockito', name: 'mockito-all', version:'2.+'
+}
+
+repositories {
+  mavenCentral()
+}                
+  
+compileJava {
+  options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
+}
+
+compileTestJava {
+  options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
+}
+
+mainClassName = 'ui.UnscrambleGUI'
+sourceSets.main.java.srcDirs = ['Unscramble/src']
+sourceSets.test.java.srcDirs = ['Unscramble/test']
+
+project.afterEvaluate {
+    def junitPlatformTestTask = project.tasks.getByName('junitPlatformTest')
+
+    jacoco {
+        toolVersion = "0.7.9"
+        applyTo junitPlatformTestTask
+    }
+
+    project.task(type: JacocoReport, "junitPlatformJacocoReport",
+      {
+        sourceDirectories = files("./Unscramble/src")
+        classDirectories = fileTree(dir: './build/classes/java/main/game',
+		      excludes: ['**/ui/*.class'])
+        executionData junitPlatformTestTask
+      })
+}
+           
+task(runui, dependsOn: 'classes', type: JavaExec) {
+  main = 'ui.UnscrambleGUI'
+  classpath = sourceSets.main.runtimeClasspath
+  standardInput = System.in
+}                                                         
+
+run{
+standardInput = System.in
+}
+
+
+defaultTasks 'clean', 'test', 'junitPlatformJacocoReport'
+
